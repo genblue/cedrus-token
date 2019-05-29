@@ -18,4 +18,8 @@ contract CedrusTokenTest is DSTest {
     function test_basic_sanity() public {
         assertTrue(true);
     }
+
+    function test_mintCedarCoin() public {
+
+    }
 }
