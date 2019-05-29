@@ -1,1 +1,2 @@
-# Cedrus Token
+# Cedrus Token 
+*
