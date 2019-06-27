@@ -1,20 +1,13 @@
 pragma solidity ^0.5.6;
 
-import "ds-auth/auth.sol";
 import "ds-token/token.sol";
-import "ds-math/math.sol";
 
-contract CedrusToken is DSAuth, DSMath {
-
-    // Cedar token
-    DSToken token;
+contract CedrusToken is DSToken {
 
     // Store minting limits for addresses 
     mapping (address => uint256) minters;
 
-    constructor(bytes32 name_) public {
-        token = new DSToken(name_);
-    }
+    constructor(bytes32 symbol_) public DSToken(symbol_) {}
 
     modifier isMintingValid(address minter_, uint256 mintingamount) {
         uint256 currentLimit = minters[minter_];
@@ -38,6 +31,6 @@ contract CedrusToken is DSAuth, DSMath {
         public 
         isMintingValid(msg.sender, cedarAmount) 
     {
-        token.mint(claimAddress, cedarAmount);
+        this.mint(claimAddress, cedarAmount);
     }
 }
