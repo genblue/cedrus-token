@@ -4,32 +4,40 @@ import "ds-auth/auth.sol";
 import "ds-token/token.sol";
 import "ds-math/math.sol";
 
-contract CedrusToken is DSAuth {
+contract CedrusToken is DSAuth, DSMath {
 
-    // token
-    // cedar token to mint
+    // Cedar token
     DSToken token;
 
+    // Store minting limits for addresses 
     mapping (address => uint256) minters;
 
-    constructor() public {
-        token = new DSToken("CEDAR2019");
+    constructor(bytes32 name_) public {
+        token = new DSToken(name_);
     }
 
-    modifier isMinterApproved(address minter_, uint256 mintingamount) {
-        require(minters[msg.sender] >= mintingamount, 'insufficient mint limit');
+    modifier isMintingValid(address minter_, uint256 mintingamount) {
+        uint256 currentLimit = minters[minter_];
+
+        // Checks whether the minter is approved for their minting amonut
+        require(currentLimit >= mintingamount, 'insufficient mint limit');
+
+        // Reduce current limit of minter by the minting amount
+        minters[minter_] = sub(currentLimit, mintingamount);
         _;
     }
 
+    // Allows the token owner to set minting limits
     function updateMinter(address minter_, uint256 newlimit_) public auth {
         minters[minter_] = newlimit_;
     }
 
+    // Allows an approved minter to mint new Cedar Coins for an address after
+    // validating their donations off-chain
     function mintCedarCoin(address claimAddress, uint256 cedarAmount) 
         public 
-        isMinterApproved(msg.sender, cedarAmount) 
+        isMintingValid(msg.sender, cedarAmount) 
     {
-        // subtract minting amount from minter's limitnot
         token.mint(claimAddress, cedarAmount);
     }
 }
