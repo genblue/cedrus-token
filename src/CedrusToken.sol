@@ -31,6 +31,7 @@ contract CedrusToken is DSToken {
         public 
         isMintingValid(msg.sender, cedarAmount) 
     {
-        this.mint(claimAddress, cedarAmount);
+        // token uses wad number type to store user balances
+        this.mint(claimAddress, mul(cedarAmount, WAD));
     }
 }

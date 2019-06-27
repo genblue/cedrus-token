@@ -1,6 +1,7 @@
 pragma solidity ^0.5.6;
 
 import "ds-test/test.sol";
+import "ds-math/math.sol";
 
 import "./CedrusToken.sol";
 
@@ -17,7 +18,7 @@ contract Bob {
 
 }
 
-contract CedrusTokenTest is DSTest {
+contract CedrusTokenTest is DSTest, DSMath {
     CedrusToken token;
     Bob bob;
 
@@ -29,8 +30,8 @@ contract CedrusTokenTest is DSTest {
     }
 
     function test_mintCedarCoin() public {
-        uint256 mintLimit = 1000 * WAD;
-        uint256 claimAmount = 10 * WAD;
+        uint256 mintLimit = 1000;
+        uint256 claimAmount = 10;
         address claimer = address(1234);
         
         token.updateMinter(address(bob), mintLimit);
@@ -38,19 +39,20 @@ contract CedrusTokenTest is DSTest {
     }
 
     function testFail_minterNotApproved() public {
-        uint256 claimAmount = 10 * WAD;
+        uint256 claimAmount = 10;
         address claimer = address(1234);
         
         bob.mintCedarCoin(claimer, claimAmount);
     }
 
     function testFail_minterLimitInvalid() public {
-        uint256 mintLimit = 1 * WAD;
-        uint256 claimAmount = 10 * WAD;
+        uint256 mintLimit = 1;
+        uint256 claimAmount = 10;
         address claimer = address(1234);
         
         token.updateMinter(address(bob), mintLimit);
         bob.mintCedarCoin(claimer, claimAmount);
+        assertEq(token.balanceOf(address(bob)), mul(claimAmount, WAD));
     }
 
 }
